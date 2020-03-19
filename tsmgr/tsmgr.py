@@ -33,16 +33,16 @@ def setup_channels():
     global channels
 
     # Get list of channel config files
-    ch_cfgs = os.listdir('tsmgr/channels')
+    configs = os.listdir('tsmgr/channels')
 
-    for c in ch_cfgs:
+    for c in configs:
         # Parse channel config
         config = configparser.ConfigParser()
         config.read(f'tsmgr/channels/{c}')
-        num = config.get('channel', 'num')
+        id = config.get('channel', 'id')
 
         # Create new channel object
-        channels[num] = Channel(config)
+        channels[id] = Channel(config)
 
 
 def load_config():
