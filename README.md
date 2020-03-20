@@ -9,8 +9,8 @@ It relies heavily on [FFmpeg](https://www.ffmpeg.org/) and [GStreamer](https://g
 
 # Installing
 ## Windows 10
- - FFmpeg
- - Python 3.8
+ - [FFmpeg](https://ffmpeg.zeranoe.com/builds/)
+ - Python >3.6
  - PIP
  - ffmpeg-python
  - TSDuck
@@ -19,7 +19,7 @@ It relies heavily on [FFmpeg](https://www.ffmpeg.org/) and [GStreamer](https://g
 ## Ubuntu 18.04
 ```
 sudo apt-get update
-sudo apt-get install python3.8 python3-pip ffmpeg
+sudo apt-get install python3.6 python3-pip ffmpeg
 
 wget https://github.com/tsduck/tsduck/releases/download/v3.20-1689/tsduck_3.20-1689_amd64.deb
 
