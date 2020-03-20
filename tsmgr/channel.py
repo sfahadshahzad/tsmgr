@@ -78,7 +78,7 @@ class Channel:
             fontcolor="white",
             box=1,
             boxcolor="black",
-            boxborderw=10,
+            boxborderw=opts[res][2]/4,
             escape_text=False
         )
 
