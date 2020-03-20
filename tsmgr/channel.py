@@ -61,15 +61,25 @@ class Channel:
         """
 
         opts = {
-            "sd": [ "smptebars", "720x576" ],
-            "hd": [ "smptehdbars", "1920x1080" ]
+            "sd": [ "smptebars", "720x576", 20 ],
+            "hd": [ "smptehdbars", "1920x1080", 38 ]
         }
 
         bars = ffmpeg.input(
             f"{opts[res][0]}=size={opts[res][1]}:rate={str(fps)}",
-            format="lavfi"
             format="lavfi",
             re=None
+        ).drawtext(
+            x=20,
+            y=20,
+            text='%{localtime:%X}:%{eif:mod(n,25):d:2}',
+            font="Arial",
+            fontsize=opts[res][2],
+            fontcolor="white",
+            box=1,
+            boxcolor="black",
+            boxborderw=10,
+            escape_text=False
         )
 
         tone = ffmpeg.filter(
