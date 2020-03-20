@@ -36,7 +36,7 @@ class Channel:
 
         output = self.setup_output(video, audio)
         self.print_args(output)
-        output.run()
+        output.overwrite_output().run()
 
 
     def setup_source(self):
@@ -73,14 +73,14 @@ class Channel:
         tone = ffmpeg.filter(
             (
                 ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi"),
-                ffmpeg.input(f"sine=frequency=2000:sample_rate=48000", format="lavfi")
+                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi")
             ),
             'join',
             inputs=2,
             channel_layout='stereo'
         ).filter(
             'volume',
-            '10dB' # -9dB output
+            '0dB'
         )
 
         print("Ready", "SOURCE")
@@ -101,7 +101,7 @@ class Channel:
 
         return ffmpeg.output(
             video, audio,
-            "H:\\bars-tone.mp4",
+            "bars-tone.mp4",
             vcodec=codec[std][0], acodec=codec[std][1]
         )
 
