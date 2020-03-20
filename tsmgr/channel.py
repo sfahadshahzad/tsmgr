@@ -44,6 +44,20 @@ class Channel:
             self.print(f"Unknown source \"{src}\"")
 
 
+    def test_src(self, res, fps):
+        """
+        Generate LAVFI test source string
+        """
+
+        if res == "sd": res == ""
+        pix = {
+            "sd": "720x576",
+            "hd": "1920x1080"
+        }
+        
+        return f"smpte{res}bars=size={pix[res]}:rate={str(fps)}"
+
+
     def print(self, msg=""):
         """
         Print channel message to console
