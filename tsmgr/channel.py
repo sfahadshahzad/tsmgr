@@ -16,9 +16,10 @@ class Channel:
         self.print()
 
         # Print input options
-        opts = dict(config.items('input'))
+        opts = dict(config.items('source'))
         for o in opts:
-            print(f"   {o.title()}:   {opts[o].upper()}")
+            o += ":"
+            print(f"   {o.title().ljust(14)}{opts[o[:-1]].upper()}")
         print()
 
         self.setup()
@@ -29,48 +30,50 @@ class Channel:
         Setup channel
         """
 
-        src = self.config.get('input', 'source')
-        self.setup_source(src)
+        self.setup_source()
 
 
-    def setup_source(self, src):
+    def setup_source(self):
         """
         Setup channel source
         """
-        src = src.lower()
-        self.print(f"Starting \"{src.upper()}\" source")
 
-        if src == "test":
-            ffmpeg.input(
-                self.test_src(
-                    self.config.get(
-                        'input',
-                        'resolution'
-                    ).lower(),
-                    25
-                ),
-                format="lavfi"
+        src = self.config.get('source', 'type').upper()
+        std = self.config.get('source', 'standard').upper()
+        res = self.config.get('source', 'resolution').lower()
+        fps = self.config.get('source', 'rate')
+
+        if src == "TEST":
+            self.source = self.src_test(res, fps)
         else:
             self.print(f"Unknown source \"{src}\"")
-
-
-    def test_src(self, res, fps):
-        """
-        Generate LAVFI test source string
-        """
-
-        if res == "sd": res == ""
-        pix = {
-            "sd": "720x576",
-            "hd": "1920x1080"
-        }
+            return False
         
-        return f"smpte{res}bars=size={pix[res]}:rate={str(fps)}"
+        self.print("Ready", "SOURCE")
 
 
-    def print(self, msg=""):
+    def src_test(self, res, fps):
+        """
+        Create test source (bars and tone)
+        """
+
+        opts = {
+            "sd": [ "smptebars", "720x576" ],
+            "hd": [ "smptehdbars", "1920x1080" ]
+        }
+
+        src = ffmpeg.input(
+            f"{opts[res][0]}=size={opts[res][1]}:rate={str(fps)}",
+            format="lavfi"
+        )
+
+        return src
+
+
+    def print(self, msg="", src=""):
         """
         Print channel message to console
         """
 
-        print(f"[{self.id}][\"{self.name}\"]  {msg}")
+        if src != "": src = f"[{src}]".upper()
+        print(f"[{self.id}][\"{self.name}\"]{src}  {msg}")
