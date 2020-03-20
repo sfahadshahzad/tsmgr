@@ -31,11 +31,9 @@ class Channel:
         """
 
         video, audio = self.setup_source()
-        self.print_args(video)
-        self.print_args(audio)
 
         output = self.setup_output(video, audio)
-        self.print_args(output)
+
         output.overwrite_output().run()
 
 
@@ -113,7 +111,7 @@ class Channel:
 
         return ffmpeg.output(
             video, audio,
-            "bars-tone.mp4",
+            f"{self.config.get('channel', 'id')} - {self.config.get('channel', 'name')}.mp4",
             vcodec=codec[std][0], acodec=codec[std][1]
         )
 
