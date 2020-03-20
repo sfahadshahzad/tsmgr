@@ -68,12 +68,14 @@ class Channel:
         bars = ffmpeg.input(
             f"{opts[res][0]}=size={opts[res][1]}:rate={str(fps)}",
             format="lavfi"
+            format="lavfi",
+            re=None
         )
 
         tone = ffmpeg.filter(
             (
-                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi"),
-                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi")
+                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None),
+                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None)
             ),
             'join',
             inputs=2,
