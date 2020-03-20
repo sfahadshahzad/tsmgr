@@ -37,9 +37,19 @@ class Channel:
         """
         Setup channel source
         """
+        src = src.lower()
+        self.print(f"Starting \"{src.upper()}\" source")
 
-        if src.lower() == "test":
-            self.print(f"Starting TEST source")
+        if src == "test":
+            ffmpeg.input(
+                self.test_src(
+                    self.config.get(
+                        'input',
+                        'resolution'
+                    ).lower(),
+                    25
+                ),
+                format="lavfi"
         else:
             self.print(f"Unknown source \"{src}\"")
 
