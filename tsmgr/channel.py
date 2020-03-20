@@ -72,7 +72,7 @@ class Channel:
         ).drawtext(
             x=20,
             y=20,
-            text='%{localtime:%X}:%{eif:mod(n,25):d:2}',
+            text='%{localtime:%X}:%{eif:mod(n,' + fps + '):d:2}',
             font="Arial",
             fontsize=opts[res][2],
             fontcolor="white",
