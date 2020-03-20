@@ -30,7 +30,13 @@ class Channel:
         Setup channel
         """
 
-        self.setup_source()
+        video, audio = self.setup_source()
+        self.print_args(video)
+        self.print_args(audio)
+
+        output = self.setup_output(video, audio)
+        self.print_args(output)
+        output.run()
 
 
     def setup_source(self):
@@ -39,17 +45,14 @@ class Channel:
         """
 
         src = self.config.get('source', 'type').upper()
-        std = self.config.get('source', 'standard').upper()
         res = self.config.get('source', 'resolution').lower()
         fps = self.config.get('source', 'rate')
 
         if src == "TEST":
-            self.source = self.src_test(res, fps)
+            return self.src_test(res, fps)
         else:
             self.print(f"Unknown source \"{src}\"")
-            return False
-        
-        self.print("Ready", "SOURCE")
+            return None, None
 
 
     def src_test(self, res, fps):
@@ -62,12 +65,58 @@ class Channel:
             "hd": [ "smptehdbars", "1920x1080" ]
         }
 
-        src = ffmpeg.input(
+        bars = ffmpeg.input(
             f"{opts[res][0]}=size={opts[res][1]}:rate={str(fps)}",
             format="lavfi"
         )
 
-        return src
+        tone = ffmpeg.filter(
+            (
+                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi"),
+                ffmpeg.input(f"sine=frequency=2000:sample_rate=48000", format="lavfi")
+            ),
+            'join',
+            inputs=2,
+            channel_layout='stereo'
+        ).filter(
+            'volume',
+            '10dB' # -9dB output
+        )
+
+        print("Ready", "SOURCE")
+        return (bars, tone)
+
+
+    def setup_output(self, video, audio):
+        """
+        Setup channel output
+        """
+
+        std = self.config.get('source', 'standard').upper()
+
+        codec = {
+            "MPEG-2": [ "mpeg2video", "mp2" ],
+            "MPEG-4": [ "libx264", "aac" ]
+        }
+
+        return ffmpeg.output(
+            video, audio,
+            "H:\\bars-tone.mp4",
+            vcodec=codec[std][0], acodec=codec[std][1]
+        )
+
+
+    def print_args(self, node):
+        """
+        Print compiled FFmpeg arguments
+        """
+
+        try:
+            args = node.output("").compile()
+        except AttributeError:
+            args = node.compile()
+        
+        print(" ".join(args))
 
 
     def print(self, msg="", src=""):
