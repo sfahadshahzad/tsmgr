@@ -6,6 +6,7 @@ MPEG transport stream manager for broadcast monitoring systems
 """
 
 import ffmpeg
+import os
 
 class Channel:
     def __init__(self, config):
@@ -113,6 +114,16 @@ class Channel:
                 escape_text=False
             )
         
+        # Image overlay
+        if config['image']:
+            path = os.path.abspath("tsmgr\\channels\\" + config['image'])
+            image = ffmpeg.input(path)
+            bars = bars.overlay(
+                image,
+                x="(main_w-overlay_w)/2",
+                y="(main_h-overlay_h)/2"
+            )
+
         # Generate sine tone
         if self.config.getboolean('test', 'tone'):
             tone = ffmpeg.filter(
