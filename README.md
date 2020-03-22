@@ -32,3 +32,6 @@ git clone https://github.com/sam210723/tsmgr
 cd tsmgr
 pip install -r requirements.txt
 ```
+
+# Network
+All source encoders use multicast address ``230.2.2.2`` and a port number based on the channel ID of the encoder (``2000 + channel_id``). The master multiplex uses port ``2000``.
