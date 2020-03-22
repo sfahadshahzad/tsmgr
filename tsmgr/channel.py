@@ -13,19 +13,16 @@ class Channel:
         self.name = config.get('channel', 'name')
         self.id = config.get('channel', 'id')
 
-        self.setup()
+        # Print channel configuration to console
+        self.print_config()
 
-
-    def setup(self):
-        """
-        Setup channel
-        """
-
+        # Setup audio and video sources
         self.video, self.audio = self.setup_source()
 
+        # Setup channel output multiplex
         self.output = self.setup_output(self.video, self.audio)
 
-        self.output.overwrite_output().run()
+        self.output.overwrite_output().run()    #TODO
 
 
     def setup_source(self):
@@ -33,59 +30,13 @@ class Channel:
         Setup channel source
         """
 
-        src = self.config.get('source', 'type').upper()
-        res = self.config.get('source', 'resolution').lower()
-        fps = self.config.get('source', 'rate')
+        config = dict(self.config.items('source'))
 
-        if src == "TEST":
-            return self.src_test(res, fps)
+        if config['type'] == "test":
+            return self.src_test(config)
         else:
-            self.print(f"Unknown source \"{src}\"")
+            self.print(f"Unknown source \"{config['type']}\"")
             return None, None
-
-
-    def src_test(self, res, fps):
-        """
-        Create test source (bars and tone)
-        """
-
-        opts = {
-            "sd": [ "smptebars", "720x576", 20 ],
-            "hd": [ "smptehdbars", "1920x1080", 38 ]
-        }
-
-        bars = ffmpeg.input(
-            f"{opts[res][0]}=size={opts[res][1]}:rate={str(fps)}",
-            format="lavfi",
-            re=None
-        ).drawtext(
-            x=20,
-            y=20,
-            text='%{localtime:%X}:%{eif:mod(n,' + fps + '):d:2}',
-            font="Arial",
-            fontsize=opts[res][2],
-            fontcolor="white",
-            box=1,
-            boxcolor="black",
-            boxborderw=opts[res][2]/4,
-            escape_text=False
-        )
-
-        tone = ffmpeg.filter(
-            (
-                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None),
-                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None)
-            ),
-            'join',
-            inputs=2,
-            channel_layout='stereo'
-        ).filter(
-            'volume',
-            '-6dB'
-        )
-
-        print("Ready", "SOURCE")
-        return (bars, tone)
 
 
     def setup_output(self, video, audio):
@@ -110,10 +61,77 @@ class Channel:
             muxrate=512000,
             metadata=f"service_name={self.config.get('channel', 'name')}",
             mpegts_service_id=self.config.get('channel', 'id'),
+            #streamid="0:0x0101",            # Video PID
+            #mpegts_start_pid=0x0012,        # PCR PID
+            #mpegts_pmt_start_pid=0x0100,    # PMT PID
             vcodec=codec[std][0],
             acodec=codec[std][1]
         )
 
+
+
+    def src_test(self, config):
+        """
+        Create test source (bars and tone)
+        """
+
+        # Combine generic and source-specific options
+        config.update(dict(self.config.items('test')))
+
+        # Resolution presets
+        presets = {
+            "sd": [ "smptebars",   "720x576",   20 ],
+            "hd": [ "smptehdbars", "1920x1080", 38 ]
+        }
+
+        bars = ffmpeg.input(
+            self.lavfi(
+                presets[config['resolution']][0],
+                size=presets[config['resolution']][1],
+                rate=config['rate']
+            ),
+            format="lavfi",
+            re=None
+        ).drawtext(
+            x=20,
+            y=20,
+            text='%{localtime:%X}:%{eif:mod(n,' + config['rate'] + '):d:2}',
+            font="Arial",
+            fontsize=presets[config['resolution']][2],
+            fontcolor="white",
+            box=1,
+            boxcolor="black",
+            boxborderw=presets[config['resolution']][2]/4,
+            escape_text=False
+        )
+
+        tone = ffmpeg.filter(
+            (
+                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None),
+                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None)
+            ),
+            'join',
+            inputs=2,
+            channel_layout='stereo'
+        ).filter(
+            'volume',
+            '-6dB'
+        )
+
+        print("Ready", "SOURCE")
+        return (bars, tone)
+
+
+    def lavfi(self, graph, **kwargs):
+        """
+        Create lavfi source string
+        """
+
+        s = f"{graph}="
+        for key, value in kwargs.items():
+            s += f"{key}={value}:"
+
+        return s
 
     def print_args(self, node):
         """
