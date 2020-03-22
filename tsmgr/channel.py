@@ -109,14 +109,6 @@ class Channel:
             "MPEG-4": [ "libx264", "aac" ]
         }
 
-        """  MP4
-        return ffmpeg.output(
-            video, audio,
-            f"{self.config.get('channel', 'id')} - {self.config.get('channel', 'name')}.mp4",
-            vcodec=codec[std][0], acodec=codec[std][1]
-        )
-        """
-
         # Output port based on channel number
         port = 2000 + int(self.config.get('channel', 'id'))
 
