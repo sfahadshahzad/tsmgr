@@ -25,6 +25,10 @@ def init():
     # Create channels objects
     create_channels()
 
+    # Setup channel encoders
+    for c in channels:
+        channels[c].setup()
+    
 
 
 def create_channels():

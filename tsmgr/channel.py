@@ -22,13 +22,17 @@ class Channel:
         # Print channel configuration to console
         self.print_config()
 
+
+    def setup(self):
+        """
+        Setup channel encoder
+        """
+
         # Setup audio and video sources
         self.video, self.audio = self.setup_source()
 
         # Setup channel output multiplex
         self.output = self.setup_output(self.video, self.audio)
-
-        self.output.overwrite_output().run()    #TODO
 
 
     def setup_source(self):
@@ -185,7 +189,7 @@ class Channel:
         else:
             tone = None
 
-        print("Ready", "SOURCE")
+        self.print("Ready")
         return (bars, tone)
 
 
@@ -223,7 +227,6 @@ class Channel:
             option = (o.title() + ":").ljust(14)
             value = options[o].upper()
             print(f"   {option}{value}")
-        print()
 
     def print(self, msg="", src=""):
         """
