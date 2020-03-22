@@ -14,7 +14,7 @@ config = configparser.ConfigParser()
 channels = {}
 
 def init():
-    print("Starting tsmgr...\n")
+    print("Starting tsmgr...")
 
     # Detect FFmpeg
     detect_deps()
@@ -22,13 +22,14 @@ def init():
     # Load configuration file
     config.read('tsmgr\\tsmgr.ini')
 
-    # Setup 
-    setup_channels()
+    # Create channels objects
+    create_channels()
 
 
-def setup_channels():
+
+def create_channels():
     """
-    Setup channel encoders
+    Create channel objects
     """
     global channels
 
@@ -36,6 +37,8 @@ def setup_channels():
     configs = os.listdir('tsmgr/channels')
 
     for c in configs:
+        if not c.endswith('.ini'): continue
+        
         # Parse channel config
         chan_config = configparser.ConfigParser()
         chan_config.read(f'tsmgr/channels/{c}')
@@ -43,6 +46,9 @@ def setup_channels():
 
         # Create new channel object
         channels[id] = Channel(chan_config, config)
+        print()
+
+
 
 
 def detect_deps():
