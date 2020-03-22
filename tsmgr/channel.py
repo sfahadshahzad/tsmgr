@@ -142,6 +142,20 @@ class Channel:
                 escape_text=False
             )
 
+        if config['banner']:
+            bars = bars.drawtext(
+                x="(w-text_w)/2",
+                y=60,
+                text=config['banner'],
+                fontfile="C:\\Windows\\Fonts\\Arialbd.ttf",
+                fontsize=presets[config['resolution']][2],
+                fontcolor="white",
+                box=1,
+                boxcolor="black",
+                boxborderw=presets[config['resolution']][2]/3,
+                escape_text=False
+            )
+
         # Generate sine tone
         if self.config.getboolean('test', 'tone'):
             tone = ffmpeg.filter(
