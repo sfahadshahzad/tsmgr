@@ -14,6 +14,7 @@ class Channel:
         self.id = self.chan_config.get('channel', 'id')
         self.name = self.chan_config.get('channel', 'name')
         self.provider = self.chan_config.get('channel', 'provider')
+        self.bitrate = self.chan_config.get('channel', 'bitrate')
         
         self.mgr_config = mgr_config
         self.table_ver = self.mgr_config.get('tsmgr', 'table_version')
@@ -66,7 +67,7 @@ class Channel:
             *streams,
             f"udp://230.2.2.2:{port}?pkt_size=1316",
             format="mpegts",
-            muxrate=512000,
+            muxrate=self.bitrate,
             mpegts_transport_stream_id=self.chan_config.get('channel', 'id'),
             mpegts_original_network_id=0x1337,
             mpegts_service_id=self.chan_config.get('channel', 'id'),
