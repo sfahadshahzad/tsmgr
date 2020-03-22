@@ -84,8 +84,8 @@ class Channel:
 
         # Resolution presets
         presets = {
-            "sd": [ "smptebars",   "720x576",   20 ],
-            "hd": [ "smptehdbars", "1920x1080", 38 ]
+            "SD": [ "smptebars",   "720x576",   20 ],
+            "HD": [ "smptehdbars", "1920x1080", 38 ]
         }
 
         # Generate SMPTE bars
@@ -122,6 +122,24 @@ class Channel:
                 image,
                 x="(main_w-overlay_w)/2",
                 y="(main_h-overlay_h)/2"
+            )
+        
+        # Text overlay
+        if config['text']:
+            path = os.path.abspath("tsmgr\\channels\\" + config['text'])
+            bars = bars.drawtext(
+                x="(w-text_w)/2",
+                y="(h-text_h)/2",
+                textfile=path,
+                reload=1,
+                fontfile="C:\\Windows\\Fonts\\Arialbd.ttf",
+                fontsize=presets[config['resolution']][2],
+                fontcolor="white",
+                line_spacing=15,
+                box=1,
+                boxcolor="black",
+                boxborderw=presets[config['resolution']][2]/1.5,
+                escape_text=False
             )
 
         # Generate sine tone
