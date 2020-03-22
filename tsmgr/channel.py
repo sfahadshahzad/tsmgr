@@ -13,15 +13,6 @@ class Channel:
         self.name = config.get('channel', 'name')
         self.id = config.get('channel', 'id')
 
-        self.print()
-
-        # Print input options
-        opts = dict(config.items('source'))
-        for o in opts:
-            o += ":"
-            print(f"   {o.title().ljust(14)}{opts[o[:-1]].upper()}")
-        print()
-
         self.setup()
 
 
@@ -136,6 +127,18 @@ class Channel:
         
         print(" ".join(args))
 
+    def print_config(self):
+        """
+        Print channel configuration
+        """
+
+        self.print()
+        options = dict(self.config.items('source'))
+        for o in options:
+            option = (o.title() + ":").ljust(14)
+            value = options[o].upper()
+            print(f"   {option}{value}")
+        print()
 
     def print(self, msg="", src=""):
         """
