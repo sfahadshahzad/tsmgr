@@ -9,11 +9,13 @@ import ffmpeg
 import os
 
 class Channel:
-    def __init__(self, config):
-        self.config = config
-        self.id = config.get('channel', 'id')
-        self.name = config.get('channel', 'name')
-        self.provider = config.get('channel', 'provider')
+    def __init__(self, chan_config, mgr_config):
+        self.chan_config = chan_config
+        self.id = self.chan_config.get('channel', 'id')
+        self.name = self.chan_config.get('channel', 'name')
+        self.provider = self.chan_config.get('channel', 'provider')
+        
+        self.mgr_config = mgr_config
 
         # Print channel configuration to console
         self.print_config()
@@ -32,7 +34,7 @@ class Channel:
         Setup channel source
         """
 
-        config = dict(self.config.items('source'))
+        config = dict(self.chan_config.items('source'))
 
         if config['type'] == "test":
             return self.src_test(config)
@@ -46,7 +48,7 @@ class Channel:
         Setup channel output
         """
 
-        std = self.config.get('source', 'standard').upper()
+        std = self.chan_config.get('source', 'standard').upper()
 
         codec = {
             "MPEG-2": [ "mpeg2video", "mp2" ],
@@ -54,7 +56,7 @@ class Channel:
         }
 
         # Output port based on channel number
-        port = 2000 + int(self.config.get('channel', 'id'))
+        port = 2000 + int(self.chan_config.get('channel', 'id'))
 
         # Check for missing audio stream
         streams = (video,) if audio == None else (video, audio)
@@ -83,7 +85,7 @@ class Channel:
         """
 
         # Combine generic and source-specific options
-        config.update(dict(self.config.items('test')))
+        config.update(dict(self.chan_config.items('test')))
 
         # Resolution presets
         presets = {
@@ -103,7 +105,7 @@ class Channel:
         )
 
         # Generate timecode text
-        if self.config.getboolean('test', 'timecode'):
+        if self.chan_config.getboolean('test', 'timecode'):
             bars = bars.drawtext(
                 x=20,
                 y=20,
@@ -160,7 +162,7 @@ class Channel:
             )
 
         # Generate sine tone
-        if self.config.getboolean('test', 'tone'):
+        if self.chan_config.getboolean('test', 'tone'):
             tone = ffmpeg.filter(
                 (
                     ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None),
@@ -209,7 +211,7 @@ class Channel:
         """
 
         self.print()
-        options = dict(self.config.items('source'))
+        options = dict(self.chan_config.items('source'))
         for o in options:
             option = (o.title() + ":").ljust(14)
             value = options[o].upper()
