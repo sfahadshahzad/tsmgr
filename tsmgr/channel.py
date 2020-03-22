@@ -30,11 +30,11 @@ class Channel:
         Setup channel
         """
 
-        video, audio = self.setup_source()
+        self.video, self.audio = self.setup_source()
 
-        output = self.setup_output(video, audio)
+        self.output = self.setup_output(self.video, self.audio)
 
-        output.overwrite_output().run()
+        self.output.overwrite_output().run()
 
 
     def setup_source(self):
