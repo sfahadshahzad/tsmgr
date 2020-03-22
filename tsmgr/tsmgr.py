@@ -10,7 +10,7 @@ import os
 import shutil
 from channel import Channel
 
-config = None
+config = configparser.ConfigParser()
 channels = {}
 
 def init():
@@ -20,7 +20,7 @@ def init():
     detect_deps()
 
     # Load configuration file
-    load_config()
+    config.read('tsmgr\\tsmgr.ini')
 
     # Setup 
     setup_channels()
@@ -37,22 +37,12 @@ def setup_channels():
 
     for c in configs:
         # Parse channel config
-        config = configparser.ConfigParser()
-        config.read(f'tsmgr/channels/{c}')
-        id = config.get('channel', 'id')
+        chan_config = configparser.ConfigParser()
+        chan_config.read(f'tsmgr/channels/{c}')
+        id = chan_config.get('channel', 'id')
 
         # Create new channel object
-        channels[id] = Channel(config)
-
-
-def load_config():
-    """
-    Load configuration from INI file
-    """
-    global config
-
-    config = configparser.ConfigParser()
-    config.read('tsmgr.ini')
+        channels[id] = Channel(chan_config, config)
 
 
 def detect_deps():
