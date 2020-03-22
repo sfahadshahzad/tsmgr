@@ -16,7 +16,7 @@ config = configparser.ConfigParser()
 channels = {}
 
 def init():
-    print("Starting tsmgr...")
+    print("Starting tsmgr...\n")
 
     # Detect FFmpeg
     detect_deps()

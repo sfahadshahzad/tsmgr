@@ -45,6 +45,8 @@ class Channel:
 
         if config['type'] == "test":
             return self.src_test(config)
+        elif config['type'] == "dshow":
+            return self.src_dshow(config)
         else:
             self.print(f"Unknown source \"{config['type']}\"")
             return None, None
@@ -112,6 +114,35 @@ class Channel:
 
         self.print("Stopping")
         self.process.kill()
+
+
+    def src_dshow(self, config):
+        """
+        Create DirectShow source
+        """
+
+        # Combine generic and source-specific options
+        config.update(dict(self.chan_config.items('dshow')))
+
+        video = ffmpeg.input(
+            f"video={config['video']}",
+            format="dshow",
+            re=None,
+            rtbufsize="2G"
+        )
+
+        if config['audio']:
+            audio = ffmpeg.input(
+                f"audio={config['audio']}",
+                format="dshow",
+                rtbufsize="20M",
+                re=None
+            )
+        else:
+            audio = None
+
+        self.print("Ready")
+        return video, audio
 
 
     def src_test(self, config):
