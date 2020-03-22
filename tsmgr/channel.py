@@ -65,13 +65,12 @@ class Channel:
             format="mpegts",
             muxrate=512000,
             mpegts_service_id=self.config.get('channel', 'id'),
+            mpegts_start_pid=0x100 * int(self.id) + 1,
+            mpegts_pmt_start_pid=0x100 * int(self.id),
             **{
                 'metadata': f'service_name={self.name}',
                 'metadata:': f'service_provider={self.provider}'
             },
-            #streamid="0:0x0101",            # Video PID
-            #mpegts_start_pid=0x0012,        # PCR PID
-            #mpegts_pmt_start_pid=0x0100,    # PMT PID
             vcodec=codec[std][0],
             acodec=codec[std][1]
         )
