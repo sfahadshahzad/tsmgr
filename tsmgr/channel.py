@@ -71,8 +71,8 @@ class Channel:
             mpegts_original_network_id=0x1337,
             mpegts_service_id=self.chan_config.get('channel', 'id'),
             mpegts_service_type="digital_tv",
-            mpegts_pmt_start_pid=0x0100 + int(self.id),
-            mpegts_start_pid=0x0200 + (0x0010 * int(self.id)) + 1,
+            mpegts_pmt_start_pid=0x0020 + int(self.id),
+            mpegts_start_pid=0x0100 + (0x0010 * int(self.id)) + 1,
             mpegts_flags="system_b",
             tables_version=self.table_ver,
             **{
