@@ -11,8 +11,9 @@ import os
 class Channel:
     def __init__(self, config):
         self.config = config
-        self.name = config.get('channel', 'name')
         self.id = config.get('channel', 'id')
+        self.name = config.get('channel', 'name')
+        self.provider = config.get('channel', 'provider')
 
         # Print channel configuration to console
         self.print_config()
@@ -63,8 +64,11 @@ class Channel:
             f"udp://230.2.2.2:{port}?pkt_size=1316",
             format="mpegts",
             muxrate=512000,
-            metadata=f"service_name={self.config.get('channel', 'name')}",
             mpegts_service_id=self.config.get('channel', 'id'),
+            **{
+                'metadata': f'service_name={self.name}',
+                'metadata:': f'service_provider={self.provider}'
+            },
             #streamid="0:0x0101",            # Video PID
             #mpegts_start_pid=0x0012,        # PCR PID
             #mpegts_pmt_start_pid=0x0100,    # PMT PID
