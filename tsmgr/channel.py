@@ -54,8 +54,11 @@ class Channel:
         # Output port based on channel number
         port = 2000 + int(self.config.get('channel', 'id'))
 
+        # Check for missing audio stream
+        streams = (video,) if audio == None else (video, audio)
+
         return ffmpeg.output(
-            video, audio,
+            *streams,
             f"udp://230.2.2.2:{port}?pkt_size=1316",
             format="mpegts",
             muxrate=512000,
@@ -84,6 +87,7 @@ class Channel:
             "hd": [ "smptehdbars", "1920x1080", 38 ]
         }
 
+        # Generate SMPTE bars
         bars = ffmpeg.input(
             self.lavfi(
                 presets[config['resolution']][0],
@@ -92,31 +96,39 @@ class Channel:
             ),
             format="lavfi",
             re=None
-        ).drawtext(
-            x=20,
-            y=20,
-            text='%{localtime:%X}:%{eif:mod(n,' + config['rate'] + '):d:2}',
-            font="Arial",
-            fontsize=presets[config['resolution']][2],
-            fontcolor="white",
-            box=1,
-            boxcolor="black",
-            boxborderw=presets[config['resolution']][2]/4,
-            escape_text=False
         )
 
-        tone = ffmpeg.filter(
-            (
-                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None),
-                ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None)
-            ),
-            'join',
-            inputs=2,
-            channel_layout='stereo'
-        ).filter(
-            'volume',
-            '-6dB'
-        )
+        # Generate timecode text
+        if self.config.getboolean('test', 'timecode'):
+            bars = bars.drawtext(
+                x=20,
+                y=20,
+                text='%{localtime:%X}:%{eif:mod(n,' + config['rate'] + '):d:2}',
+                font="Arial",
+                fontsize=presets[config['resolution']][2],
+                fontcolor="white",
+                box=1,
+                boxcolor="black",
+                boxborderw=presets[config['resolution']][2]/4,
+                escape_text=False
+            )
+        
+        # Generate sine tone
+        if self.config.getboolean('test', 'tone'):
+            tone = ffmpeg.filter(
+                (
+                    ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None),
+                    ffmpeg.input(f"sine=frequency=1000:sample_rate=48000", format="lavfi", re=None)
+                ),
+                'join',
+                inputs=2,
+                channel_layout='stereo'
+            ).filter(
+                'volume',
+                '-6dB'
+            )
+        else:
+            tone = None
 
         print("Ready", "SOURCE")
         return (bars, tone)
