@@ -35,3 +35,10 @@ pip install -r requirements.txt
 
 # Network
 All source encoders use multicast address ``230.2.2.2`` and a port number based on the channel ID of the encoder (``2000 + channel_id``). The master multiplex uses port ``2000``.
+
+# PID Mapping
+| Channel | PMT        | Video      | Audio      | TS ID |
+| ------- | ---------- | ---------- | ---------- | ----- |
+| 1       | ``0x0100`` | ``0x0101`` | ``0x0102`` | 1     |
+| 2       | ``0x0200`` | ``0x0201`` | ``0x0202`` | 2     |
+| 3       | ``0x0300`` | ``0x0301`` | ``0x0302`` | 3     |
