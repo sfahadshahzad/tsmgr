@@ -116,7 +116,7 @@ class Channel:
             video, audio,
             f"udp://230.2.2.2:{port}?pkt_size=1316",
             format="mpegts",
-            muxrate=2000000,
+            muxrate=512000,
             metadata=f"service_name={self.config.get('channel', 'name')}",
             mpegts_service_id=self.config.get('channel', 'id'),
             vcodec=codec[std][0],
