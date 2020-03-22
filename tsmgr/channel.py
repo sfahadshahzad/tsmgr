@@ -7,6 +7,7 @@ MPEG transport stream manager for broadcast monitoring systems
 
 import ffmpeg
 import os
+import subprocess
 
 class Channel:
     def __init__(self, chan_config, mgr_config):
@@ -87,6 +88,21 @@ class Channel:
             vcodec=codec[std][0],
             acodec=codec[std][1]
         )
+
+
+    def run(self):
+        """
+        Run channel encoder
+        """
+
+        self.process = (
+            self.output.run_async(
+                quiet=True
+                # Fix applied to _run.py from https://github.com/kkroening/ffmpeg-python/issues/195
+            )
+        )
+
+        self.print("Running")
 
 
 

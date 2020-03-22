@@ -8,6 +8,8 @@ MPEG transport stream manager for broadcast monitoring systems
 import configparser
 import os
 import shutil
+import time
+
 from channel import Channel
 
 config = configparser.ConfigParser()
@@ -29,6 +31,12 @@ def init():
     for c in channels:
         channels[c].setup()
     
+    # Run channel encoders
+    for c in channels:
+        channels[c].run()
+    
+    while True:
+        time.sleep(1)
 
 
 def create_channels():
