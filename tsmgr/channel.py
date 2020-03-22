@@ -16,6 +16,7 @@ class Channel:
         self.provider = self.chan_config.get('channel', 'provider')
         
         self.mgr_config = mgr_config
+        self.table_ver = self.mgr_config.get('tsmgr', 'table_version')
 
         # Print channel configuration to console
         self.print_config()
@@ -69,6 +70,7 @@ class Channel:
             mpegts_service_id=self.config.get('channel', 'id'),
             mpegts_start_pid=0x100 * int(self.id) + 1,
             mpegts_pmt_start_pid=0x100 * int(self.id),
+            tables_version=self.table_ver,
             **{
                 'metadata': f'service_name={self.name}',
                 'metadata:': f'service_provider={self.provider}'
