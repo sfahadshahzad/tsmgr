@@ -105,6 +105,14 @@ class Channel:
         self.print("Running")
 
 
+    def stop(self):
+        """
+        Stop encoder thread
+        """
+
+        self.print("Stopping")
+        self.process.kill()
+
 
     def src_test(self, config):
         """

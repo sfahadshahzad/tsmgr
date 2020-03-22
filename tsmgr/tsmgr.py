@@ -61,6 +61,13 @@ def create_channels():
         print()
 
 
+def stop():
+    """
+    Stop channel encoders
+    """
+
+    for c in channels:
+        channels[c].stop()
 
 
 def detect_deps():
@@ -76,5 +83,6 @@ def detect_deps():
 try:
     init()
 except KeyboardInterrupt:
-    print("Exiting...")
+    print("\nExiting...")
+    stop()
     exit(0)
