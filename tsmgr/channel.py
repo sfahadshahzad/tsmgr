@@ -55,6 +55,7 @@ class Channel:
     def setup_output(self, video, audio):
         """
         Setup channel output
+        http://www.waveguide.se/?article=creating-dvb-t-compatible-mpeg2-streams-using-ffmpeg
         """
 
         std = self.chan_config.get('source', 'standard').upper()
@@ -119,6 +120,8 @@ class Channel:
     def src_dshow(self, config):
         """
         Create DirectShow source
+        http://ffmpeg.org/ffmpeg-devices.html#dshow
+        https://trac.ffmpeg.org/wiki/DirectShow
         """
 
         # Combine generic and source-specific options
@@ -259,6 +262,7 @@ class Channel:
 
         return s
 
+
     def print_args(self, node):
         """
         Print compiled FFmpeg arguments
@@ -271,6 +275,7 @@ class Channel:
         
         print(" ".join(args))
 
+
     def print_config(self):
         """
         Print channel configuration
@@ -282,6 +287,7 @@ class Channel:
             option = (o.title() + ":").ljust(14)
             value = options[o].upper()
             print(f"   {option}{value}")
+
 
     def print(self, msg="", src=""):
         """
