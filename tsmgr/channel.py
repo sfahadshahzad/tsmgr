@@ -16,7 +16,8 @@ class Channel:
         self.name = self.chan_config.get('channel', 'name')
         self.provider = self.chan_config.get('channel', 'provider')
         self.bitrate = self.chan_config.get('channel', 'bitrate')
-        
+        self.quiet = self.chan_config.getboolean('channel', 'quiet')
+
         self.mgr_config = mgr_config
         self.table_ver = self.mgr_config.get('tsmgr', 'table_version')
 
@@ -100,7 +101,7 @@ class Channel:
 
         self.process = (
             self.output.run_async(
-                quiet=True
+                quiet=self.quiet
                 # Fix applied to _run.py from https://github.com/kkroening/ffmpeg-python/issues/195
             )
         )
