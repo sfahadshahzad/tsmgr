@@ -42,3 +42,36 @@ All source encoders use multicast address ``230.2.2.2`` and a port number based 
 | 1       | ``0x0021`` | ``0x0111`` | ``0x0112`` | 1     |
 | 2       | ``0x0022`` | ``0x0121`` | ``0x0122`` | 2     |
 | 3       | ``0x0023`` | ``0x0131`` | ``0x0132`` | 3     |
+
+# Configuration
+## ``channel``
+| Key          | Description |
+| ------------ | ----------- |
+| ``id``       | Channel Number (used in TS PIDs/ID and UDP Port) |
+| ``name``     | Channel Name |
+| ``provider`` | Program Provider |
+| ``bitrate``  | Multiplex Bitrate |
+
+## ``source``
+| Key            | Description |
+| -------------- | ----------- |
+| ``type``       | Source Type (``test``, ``dshow``) |
+| ``standard``   | MPEG Standard (``MPEG-2``, ``MPEG-4``) |
+| ``resolution`` | Video Resolution (SD: ``720x576``, HD: ``1920x1080``) |
+| ``rate``       | Frame Rate |
+
+## ``test``
+| Key          | Description |
+| ------------ | ----------- |
+| ``tone``     | 1 kHz Sine Tone (``yes``/``no``) |
+| ``timecode`` | Timecode Overlay (``yes``/``no``) |
+| ``image``    | Image Overlay (file path) |
+| ``text``     | Text Overlay (file path) |
+| ``banner``   | Banner Text (string) |
+
+## ``dshow``
+| Key        | Description |
+| ---------- | ----------- |
+| ``video``  | Video Device Name |
+| ``audio``  | Audio Device Name |
+| ``format`` | Video Format (yuyv422) |
