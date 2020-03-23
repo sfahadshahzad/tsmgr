@@ -124,9 +124,19 @@ class Channel:
         # Combine generic and source-specific options
         config.update(dict(self.chan_config.items('dshow')))
 
+        # Resolution presets
+        presets = {
+            "SD": "720x576",
+            "HD": "1920x1080"
+        }
+
         dshow = ffmpeg.input(
             f"video={config['video']}:audio={config['audio']}",
             format="dshow",
+            s=presets[config['resolution']],
+            framerate=config['rate'],
+            pixel_format=config['format'],
+            #show_video_device_dialog="true",
             re=None,
             rtbufsize="500M"
         )
