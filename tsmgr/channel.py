@@ -124,25 +124,15 @@ class Channel:
         # Combine generic and source-specific options
         config.update(dict(self.chan_config.items('dshow')))
 
-        video = ffmpeg.input(
-            f"video={config['video']}",
+        dshow = ffmpeg.input(
+            f"video={config['video']}:audio={config['audio']}",
             format="dshow",
             re=None,
-            rtbufsize="2G"
+            rtbufsize="500M"
         )
 
-        if config['audio']:
-            audio = ffmpeg.input(
-                f"audio={config['audio']}",
-                format="dshow",
-                rtbufsize="20M",
-                re=None
-            )
-        else:
-            audio = None
-
         self.print("Ready")
-        return video, audio
+        return dshow, None
 
 
     def src_test(self, config):
