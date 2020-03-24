@@ -60,8 +60,15 @@ def create_channels():
         chan_config.read(f'tsmgr/channels/{c}')
         id = chan_config.get('channel', 'id')
 
-        # Create new channel object
-        channels[id] = Channel(chan_config, config)
+        # Check for channel ID conflicts
+        try:
+            channels[id]
+            print(f"Channel ID conflict (ID: {id})\nExiting...")
+            exit(1)
+        except KeyError:
+            # Create new channel object
+            channels[id] = Channel(chan_config, config)
+
         print()
     print("--------------------------------\n")
 
