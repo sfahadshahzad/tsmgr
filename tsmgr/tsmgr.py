@@ -30,6 +30,7 @@ def init():
     # Setup channel encoders
     for c in channels:
         channels[c].setup()
+    print()
     
     # Run channel encoders
     for c in channels:

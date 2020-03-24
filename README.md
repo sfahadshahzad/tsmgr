@@ -56,7 +56,7 @@ All source encoders use multicast address ``230.2.2.2`` and a port number based 
 | ``id``       | Channel Number (used in TS PIDs/ID and UDP Port) |
 | ``name``     | Channel Name |
 | ``provider`` | Program Provider |
-| ``bitrate``  | Multiplex Bitrate |
+| ``muxrate``  | Multiplex Bitrate |
 
 ## ``source``
 | Key            | Description |

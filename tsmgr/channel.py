@@ -15,7 +15,7 @@ class Channel:
         self.id = self.chan_config.get('channel', 'id')
         self.name = self.chan_config.get('channel', 'name')
         self.provider = self.chan_config.get('channel', 'provider')
-        self.bitrate = self.chan_config.get('channel', 'bitrate')
+        self.muxrate = self.chan_config.get('channel', 'muxrate')
         self.quiet = self.chan_config.getboolean('channel', 'quiet')
 
         self.mgr_config = mgr_config
@@ -76,7 +76,7 @@ class Channel:
             *streams,
             f"udp://230.2.2.2:{port}?pkt_size=1316",
             format="mpegts",
-            muxrate=self.bitrate,
+            muxrate=self.muxrate,
             mpegts_transport_stream_id=self.chan_config.get('channel', 'id'),
             mpegts_original_network_id=0x1337,
             mpegts_service_id=self.chan_config.get('channel', 'id'),
@@ -105,7 +105,7 @@ class Channel:
                 # Fix applied to _run.py from https://github.com/kkroening/ffmpeg-python/issues/195
             )
         )
-
+        #self.process.wait() #TODO: Thread per subprocess?
         self.print("Running")
 
 
@@ -138,7 +138,7 @@ class Channel:
             f"video={config['video']}:audio={config['audio']}",
             format="dshow",
             s=presets[config['resolution']],
-            framerate=config['rate'],
+            framerate=config['fps'],
             pixel_format=config['format'],
             #show_video_device_dialog="true",
             re=None,
@@ -168,7 +168,7 @@ class Channel:
             self.lavfi(
                 presets[config['resolution']][0],
                 size=presets[config['resolution']][1],
-                rate=config['rate']
+                rate=config['fps']
             ),
             format="lavfi",
             re=None
@@ -179,7 +179,7 @@ class Channel:
             bars = bars.drawtext(
                 x=20,
                 y=20,
-                text='%{localtime:%X}:%{eif:mod(n,' + config['rate'] + '):d:2}',
+                text='%{localtime:%X}:%{eif:mod(n,' + config['fps'] + '):d:2}',
                 font="Arial",
                 fontsize=presets[config['resolution']][2],
                 fontcolor="white",
@@ -284,9 +284,10 @@ class Channel:
 
         self.print()
         options = dict(self.chan_config.items('source'))
+        options.update({"muxrate": f"{int(self.muxrate)/1e6} Mbps"})
         for o in options:
-            option = (o.title() + ":").ljust(14)
-            value = options[o].upper()
+            option = (o + ":").ljust(14)
+            value = options[o]
             print(f"   {option}{value}")
 
 
