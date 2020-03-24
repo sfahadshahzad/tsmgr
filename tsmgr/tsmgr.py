@@ -68,8 +68,6 @@ def create_channels(only_id=None):
         chan_config.read(f'tsmgr/channels/{c}')
         id = chan_config.get('channel', 'id')
 
-        # Check for channel ID conflicts
-        try:
         if only_id:
             if id == only_id:
                 channels[id] = Channel(chan_config, config)
@@ -187,6 +185,10 @@ def detect_deps():
 
     if shutil.which("ffmpeg") is None:
         print("FFmpeg not found")
+        exit(1)
+    
+    if shutil.which("tsp") is None:
+        print("TSDuck not found")
         exit(1)
 
 
