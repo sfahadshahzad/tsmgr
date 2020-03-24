@@ -155,6 +155,7 @@ class Channel:
     def src_test(self, config):
         """
         Create test source (bars and tone)
+        https://libav.org/documentation/libavfilter.html
         """
 
         # Combine generic and source-specific options
@@ -175,6 +176,9 @@ class Channel:
             ),
             format="lavfi",
             re=None
+        ).filter(
+            "setdar",
+            dar="16/9"  # Force 16:9 aspect
         )
 
         # Generate timecode text
