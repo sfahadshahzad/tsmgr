@@ -64,6 +64,7 @@ def create_channels():
         # Create new channel object
         channels[id] = Channel(chan_config, config)
         print()
+    print("--------------------------------\n")
 
 
 def setup_channels():
@@ -88,6 +89,9 @@ def run_channels():
         threads[c].name = c
         threads[c].run = channels[c].run
         threads[c].start()
+    
+    time.sleep(0.5)
+    print()
 
 
 def stop_channels():
@@ -98,9 +102,8 @@ def stop_channels():
     # Stop subprocesses
     for c in channels:
         channels[c].stop()
-    print()
     
-    print("Waiting for threads to terminate...")
+    # Wait for threads to terminate
     while True:
         alive = False
         for t in threads:
@@ -123,7 +126,6 @@ def detect_deps():
 try:
     init()
 except KeyboardInterrupt:
-    print("\nStopping subprocesses...")
     stop_channels()
-    print("\nExiting...")
+    print("\nExiting tsmgr...")
     exit(0)

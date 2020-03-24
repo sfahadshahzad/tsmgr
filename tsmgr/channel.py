@@ -289,7 +289,7 @@ class Channel:
         options = dict(self.chan_config.items('source'))
         options.update({"muxrate": f"{int(self.muxrate)/1e6} Mbps"})
         for o in options:
-            option = (o + ":").ljust(14)
+            option = (o + ":").ljust(14).upper()
             value = options[o]
             print(f"   {option}{value}")
 
@@ -300,4 +300,5 @@ class Channel:
         """
 
         if src != "": src = f"[{src}]".upper()
-        print(f"[{self.id}][\"{self.name}\"]{src}  {msg}")
+        pre = f"[{self.id}][\"{self.name}\"]{src}"
+        print(f"{pre.ljust(25)}{msg}")
