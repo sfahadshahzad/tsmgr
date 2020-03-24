@@ -105,8 +105,11 @@ class Channel:
                 # Fix applied to _run.py from https://github.com/kkroening/ffmpeg-python/issues/195
             )
         )
-        #self.process.wait() #TODO: Thread per subprocess?
         self.print("Running")
+
+        return_code = self.process.wait()
+        if return_code:
+            self.print(f"Exited with code {return_code}")
 
 
     def stop(self):
