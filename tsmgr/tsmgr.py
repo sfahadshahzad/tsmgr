@@ -16,6 +16,7 @@ from channel import Channel
 config = configparser.ConfigParser()
 channels = {}
 threads = {}
+cli_thread = None
 
 def init():
     print("Starting tsmgr...\n")
@@ -30,7 +31,15 @@ def init():
     create_channels()
     setup_channels()
     run_channels()
-    
+
+    # Setup CLI thread
+    global cli_thread
+    cli_thread = threading.Thread()
+    cli_thread.name = "cli"
+    cli_thread.daemon = True
+    cli_thread.run = cli
+    cli_thread.start()
+
     # Monitor threads
     while True:
         for t in threads:
@@ -38,8 +47,7 @@ def init():
                 threads[t] = threading.Thread()
                 threads[t].name = t
                 threads[t].run = channels[t].run
-                threads[t].start() 
-
+                threads[t].start()
         time.sleep(5)
 
 
@@ -117,6 +125,20 @@ def stop_channels():
         
         if not alive: return
         time.sleep(0.1)
+
+
+def cli():
+    """
+    Listen for and handle stdin
+    """
+
+    while True:
+        try:
+            i = input()
+        except EOFError:
+            continue
+        
+        print(i)
 
 
 def detect_deps():
