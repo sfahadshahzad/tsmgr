@@ -121,6 +121,7 @@ class Channel:
         self.process.kill()
 
 
+
     def src_dshow(self, config):
         """
         Create DirectShow source
@@ -269,6 +270,7 @@ class Channel:
             s += f"{key}={value}:"
 
         return s
+
 
 
     def print_args(self, node):

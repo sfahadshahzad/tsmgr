@@ -136,6 +136,7 @@ def stop_channels():
         time.sleep(0.1)
 
 
+
 def cli():
     """
     Listen for and handle stdin
@@ -158,6 +159,7 @@ def reload_channel(c):
     Reload channel encoder 
     """
 
+    # Check channel ID is valid
     try:
         channels[c]
     except KeyError:
@@ -172,15 +174,20 @@ def reload_channel(c):
         print(f"MPEG-TS Table Version: {table_ver} -> {new_table_ver}")
         table_ver = new_table_ver
 
+    # Stop channel thread
     if threads[c].is_alive():
         channels[c].stop()
         time.sleep(1)
         print()
     
+    # Create new channel object
     channels[c] == None
     create_channels(c)
+
+    # Setup channel encoder
     channels[c].setup()
 
+    # Create and start channel thread
     threads[c] = threading.Thread()
     threads[c].name = c
     threads[c].run = channels[c].run
@@ -188,6 +195,7 @@ def reload_channel(c):
 
     time.sleep(0.5)
     print()
+
 
 
 def detect_deps():
