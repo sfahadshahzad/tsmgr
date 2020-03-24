@@ -8,6 +8,7 @@ MPEG transport stream manager for broadcast monitoring systems
 import configparser
 import os
 import shutil
+import subprocess
 import threading
 import time
 
@@ -18,6 +19,7 @@ table_ver = "-1"
 channels = {}
 threads = {}
 cli_thread = None
+merge_thread = None
 
 def init():
     print("Starting tsmgr...")
@@ -33,6 +35,16 @@ def init():
 
     # Create, setup and run channels objects
     create_channels()
+
+    # Setup merge thread
+    global merge_thread
+    merge_thread = threading.Thread()
+    merge_thread.name = "merge"
+    merge_thread.daemon = True
+    merge_thread.run = merge
+    merge_thread.start()
+
+    # Setup and run channel encoders
     setup_channels()
     run_channels()
 
@@ -195,6 +207,34 @@ def reload_channel(c):
 
     time.sleep(0.5)
     print()
+
+
+
+def merge():
+    """
+    Merge muxes with TSDuck
+    """
+
+    print("Starting merge thread...\n\n")
+
+    cmd = "tsp "
+    for c in channels:
+        port = 2000 + int(c)
+
+        if c != "1":
+            cmd += "-P merge \"tsp "
+            cmd += f"-I ip 230.2.2.2:{port}\" "
+        else:
+            cmd += f"-I ip 230.2.2.2:{port} "
+    
+    cmd += "-O ip --enforce-burst 230.2.2.2:2000"
+
+    tsduck = subprocess.call(
+        cmd,
+        shell=False,
+        stdout=open(os.devnull, 'w'),
+        stderr=subprocess.STDOUT
+    )
 
 
 
