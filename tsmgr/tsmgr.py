@@ -14,18 +14,22 @@ import time
 from channel import Channel
 
 config = configparser.ConfigParser()
+table_ver = "-1"
 channels = {}
 threads = {}
 cli_thread = None
 
 def init():
-    print("Starting tsmgr...\n")
+    print("Starting tsmgr...")
 
     # Detect FFmpeg
     detect_deps()
 
     # Load configuration file
     config.read('tsmgr\\tsmgr.ini')
+    global table_ver
+    table_ver = config.get('tsmgr', 'table_version')
+    print(f"MPEG-TS Table Version: {table_ver}\n")
 
     # Create, setup and run channels objects
     create_channels()
@@ -159,6 +163,14 @@ def reload_channel(c):
     except KeyError:
         print("Invalid channel ID\n")
         return
+    
+    # Reload tsmgr configuration file
+    config.read('tsmgr\\tsmgr.ini')
+    global table_ver
+    new_table_ver = config.get('tsmgr', 'table_version')
+    if table_ver != new_table_ver:
+        print(f"MPEG-TS Table Version: {table_ver} -> {new_table_ver}")
+        table_ver = new_table_ver
 
     if threads[c].is_alive():
         channels[c].stop()
