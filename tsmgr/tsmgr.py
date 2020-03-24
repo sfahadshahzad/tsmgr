@@ -31,17 +31,16 @@ def init():
     setup_channels()
     run_channels()
     
+    # Monitor threads
     while True:
-        # Check at least one thread is alive
-        alive = False
         for t in threads:
-            alive |= threads[t].is_alive()
-        
-        if not alive:
-            print("\nNo alive threads\nExiting...")
-            return
+            if not threads[t].is_alive():
+                threads[t] = threading.Thread()
+                threads[t].name = t
+                threads[t].run = channels[t].run
+                threads[t].start() 
 
-        time.sleep(1)
+        time.sleep(5)
 
 
 def create_channels():
