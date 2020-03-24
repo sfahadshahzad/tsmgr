@@ -48,10 +48,10 @@ def init():
                 threads[t].name = t
                 threads[t].run = channels[t].run
                 threads[t].start()
-        time.sleep(5)
+        time.sleep(10)
 
 
-def create_channels():
+def create_channels(only_id=None):
     """
     Create channel objects
     """
@@ -70,15 +70,21 @@ def create_channels():
 
         # Check for channel ID conflicts
         try:
-            channels[id]
-            print(f"Channel ID conflict (ID: {id})\nExiting...")
-            exit(1)
-        except KeyError:
-            # Create new channel object
-            channels[id] = Channel(chan_config, config)
-
-        print()
-    print("--------------------------------\n")
+        if only_id:
+            if id == only_id:
+                channels[id] = Channel(chan_config, config)
+                print()
+        else:
+            # Check for channel ID conflicts
+            try:
+                channels[id]
+                print(f"Channel ID conflict (ID: {id})\nExiting...")
+                exit(1)
+            except KeyError:
+                # Create new channel object
+                channels[id] = Channel(chan_config, config)
+            print()
+    if not only_id: print("--------------------------------\n")
 
 
 def setup_channels():
@@ -116,6 +122,7 @@ def stop_channels():
     # Stop subprocesses
     for c in channels:
         channels[c].stop()
+    print()
     
     # Wait for threads to terminate
     while True:
@@ -138,7 +145,39 @@ def cli():
         except EOFError:
             continue
         
-        print(i)
+        if i.startswith("r "):  # Reload channel
+            reload_channel(i[2:])
+        else:
+            print("Invalid command\n")
+
+
+def reload_channel(c):
+    """
+    Reload channel encoder 
+    """
+
+    try:
+        channels[c]
+    except KeyError:
+        print("Invalid channel ID\n")
+        return
+
+    if threads[c].is_alive():
+        channels[c].stop()
+        time.sleep(1)
+        print()
+    
+    channels[c] == None
+    create_channels(c)
+    channels[c].setup()
+
+    threads[c] = threading.Thread()
+    threads[c].name = c
+    threads[c].run = channels[c].run
+    threads[c].start()
+
+    time.sleep(0.5)
+    print()
 
 
 def detect_deps():
