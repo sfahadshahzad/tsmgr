@@ -134,19 +134,19 @@ class Channel:
 
         # Resolution presets
         presets = {
-            "SD": "720x576",
-            "HD": "1920x1080"
+            "SD": [ "720x576", "5M" ],
+            "HD": [ "1920x1080", "50M" ]
         }
 
         dshow = ffmpeg.input(
             f"video={config['video']}:audio={config['audio']}",
             format="dshow",
-            s=presets[config['resolution']],
+            s=presets[config['resolution']][0],
             framerate=config['fps'],
             pixel_format=config['format'],
             #show_video_device_dialog="true",
             re=None,
-            rtbufsize="500M"
+            rtbufsize=presets[config['resolution']][1]
         )
 
         self.print("Ready")
